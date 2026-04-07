@@ -1,20 +1,8 @@
-pipeline {
-    agent any
-
-    stages {
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t devops-python-app .'
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
-            }
-        }
-
+stage('Deploy to Kubernetes') {
+    steps {
+        sh 'docker cp deployment.yaml minikube:/tmp/deployment.yaml'
+        sh 'docker cp service.yaml minikube:/tmp/service.yaml'
+        sh 'docker exec minikube kubectl apply -f /tmp/deployment.yaml'
+        sh 'docker exec minikube kubectl apply -f /tmp/service.yaml'
     }
 }
